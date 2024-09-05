@@ -4,9 +4,10 @@ import streamlit as st
 from streamlit_chat import message
 from rag import ChatPDF
 import ollama
+import json
+from datetime import datetime
 
 st.set_page_config(page_title="Dirty Rag")
-
 
 def display_messages():
     st.subheader("Chat")
@@ -56,6 +57,25 @@ def get_ollama_models():
     models = ollama.list()
     return [model['name'] for model in models['models']]
 
+def clear_conversation():
+    st.session_state["messages"] = []
+    st.session_state["assistant"].clear()
+    st.success("Conversation cleared!")
+
+def save_conversation():
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"conversation_{timestamp}.json"
+    with open(filename, "w") as f:
+        json.dump(st.session_state["messages"], f)
+    st.success(f"Conversation saved as {filename}")
+
+def load_conversation():
+    uploaded_file = st.file_uploader("Choose a conversation file", type="json")
+    if uploaded_file is not None:
+        conversations = json.load(uploaded_file)
+        st.session_state["messages"] = conversations
+        st.success("Conversation loaded successfully!")
+
 def page():
     if len(st.session_state) == 0:
         st.session_state["messages"] = []
@@ -63,8 +83,16 @@ def page():
 
     st.header("Dirty Rag")
 
-    available_models = get_ollama_models()
-    selected_model = st.selectbox("Select Model", available_models, key="model_selector", on_change=change_model)
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        available_models = get_ollama_models()
+        st.selectbox("Select Model", available_models, key="model_selector", on_change=change_model)
+    with col2:
+        st.button("Clear Conversation", on_click=clear_conversation)
+    with col3:
+        st.button("Save Conversation", on_click=save_conversation)
+    with col4:
+        st.button("Load Conversation", on_click=load_conversation)
 
     st.subheader("Upload a document")
     st.file_uploader(
