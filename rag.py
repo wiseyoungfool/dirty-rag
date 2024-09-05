@@ -13,7 +13,7 @@ from langchain.memory import ConversationBufferMemory
 class ChatPDF:
     def __init__(self, model):
         self.model = ChatOllama(model=model)
-        self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=100)
+        self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=2048, chunk_overlap=200)
         self.memory = ConversationBufferMemory(k=10, return_messages=True)
         self.prompt = PromptTemplate.from_template(
             """
@@ -59,7 +59,7 @@ class ChatPDF:
         self.retriever = vector_store.as_retriever(
             search_type="similarity_score_threshold",
             search_kwargs={
-                "k": 3,
+                "k": 5,
                 "score_threshold": 0.5,
             },
         )
