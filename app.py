@@ -3,8 +3,9 @@ import tempfile
 import streamlit as st
 from streamlit_chat import message
 from rag import ChatPDF
+import ollama
 
-st.set_page_config(page_title="ChatPDF")
+st.set_page_config(page_title="Dirty Rag")
 
 
 def display_messages():
@@ -38,18 +39,27 @@ def read_and_save_file():
             st.session_state["assistant"].ingest(file_path)
         os.remove(file_path)
 
+def change_model():
+    st.session_state["assistant"].set_model(st.session_state["model_selector"])
+
+def get_ollama_models():
+    models = ollama.list()
+    return [model['name'] for model in models['models']]
 
 def page():
     if len(st.session_state) == 0:
         st.session_state["messages"] = []
-        st.session_state["assistant"] = ChatPDF()
+        st.session_state["assistant"] = ChatPDF("mistral")
 
-    st.header("ChatPDF")
+    st.header("Dirty Rag")
+
+    available_models = get_ollama_models()
+    selected_model = st.selectbox("Select Model", available_models, key="model_selector", on_change=change_model)
 
     st.subheader("Upload a document")
     st.file_uploader(
         "Upload document",
-        type=["pdf"],
+        type=["pdf"], #, "txt", "doc", "docx", "epub", "md", "py", "cpp", "cs", "html", "js"],
         key="file_uploader",
         on_change=read_and_save_file,
         label_visibility="collapsed",
