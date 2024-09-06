@@ -2,7 +2,7 @@ from langchain_community.vectorstores import Chroma
 from langchain_community.chat_models import ChatOllama
 from langchain_community.embeddings import FastEmbedEmbeddings
 from langchain.schema.output_parser import StrOutputParser
-from langchain_community.document_loaders import PyPDFLoader, TextLoader, UnstructuredFileLoader
+from langchain_community.document_loaders import PyPDFLoader, TextLoader, Docx2txtLoader, CSVLoader, JSONLoader, UnstructuredHTMLLoader, PythonLoader, UnstructuredEPubLoader, UnstructuredMarkdownLoader, UnstructuredFileLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema.runnable import RunnablePassthrough, RunnableLambda
 from langchain.prompts import PromptTemplate
@@ -48,8 +48,28 @@ class ChatPDF:
             | StrOutputParser()
         )
 
-    def ingest(self, file_path: str):
-        loader = PyPDFLoader(file_path=file_path)
+    def ingest(self, file_path: str, file_name: str):
+        print(f"File path: {file_path}")
+        file_extension = file_name.split('.')[-1].lower()
+        print(f"File extension is {file_extension}")
+        if file_extension == 'pdf':
+            loader = PyPDFLoader(file_path=file_path)
+            print("Using PDF Loader")
+        elif file_extension == 'txt':
+            loader = TextLoader(file_path=file_path)
+            print("Using Text Loader")
+        elif file_extension == 'doc' or file_extension == 'docx':
+            loader = Docx2txtLoader(file_path=file_path)
+            print("Using doc loader")
+        elif file_extension == 'csv':
+            loader = CSVLoader(file_path=file_path)
+            print("Using CSV Loader")
+        elif file_extension == 'py':
+            loader = PythonLoader(file_path=file_path)
+            print("using Python Loader")
+        else:
+            print("File Not recognized")
+            return
         
         docs = loader.load()
         chunks = self.text_splitter.split_documents(docs)

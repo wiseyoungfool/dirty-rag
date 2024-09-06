@@ -35,12 +35,13 @@ def read_and_save_file():
     st.session_state["user_input"] = ""
 
     for file in st.session_state["file_uploader"]:
+        print(f"Uploading file: {file.name}")
         with tempfile.NamedTemporaryFile(delete=False) as tf:
             tf.write(file.getbuffer())
             file_path = tf.name
 
         with st.session_state["ingestion_spinner"], st.spinner(f"Ingesting {file.name}"):
-            st.session_state["assistant"].ingest(file_path)
+            st.session_state["assistant"].ingest(file_path, file.name)
         os.remove(file_path)
 
     st.success("Document(s) ingested successfully!")
@@ -97,7 +98,7 @@ def page():
     st.subheader("Upload a document")
     st.file_uploader(
         "Upload document",
-        type=["pdf"], #, "txt", "doc", "docx", "epub", "md", "py", "cpp", "cs", "html", "js"],
+        type=["pdf", "txt", "doc", "docx", "py", "csv", ],
         key="file_uploader",
         on_change=read_and_save_file,
         label_visibility="collapsed",
