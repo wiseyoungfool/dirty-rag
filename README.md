@@ -1,7 +1,8 @@
-![Dirty RAG](https://github.com/user-attachments/assets/1b6a1c49-2b96-4ae4-8f6b-048c9e287eeb)
 # Dirty Rag
 
 This is a Retrieval-Augmented Generation (RAG) chat application built with Streamlit and LangChain. It allows users to upload documents, chat with an AI assistant, and receive responses based on the content of the uploaded documents.
+
+![Dirty RAG](https://github.com/user-attachments/assets/1b6a1c49-2b96-4ae4-8f6b-048c9e287eeb)
 
 ## Features
 - Support for regular chat and RAG document retrieval
