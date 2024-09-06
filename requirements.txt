@@ -1,0 +1,12 @@
+streamlit
+streamlit-chat
+langchain
+langchain-community
+chromadb
+fastembeddings
+pypdf
+docx2txt
+unstructured
+markdown
+python-magic
+ollama
